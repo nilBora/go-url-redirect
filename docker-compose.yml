@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+#  app_nginx:
+#    container_name: ${APP_COMPOSE_PROJECT_NAME}_nginx
+#    image: nginx:alpine
+#    networks:
+#      - redirect-backend
+#    working_dir: /app
+#    volumes:
+#      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+#      - ./:/app
+#    ports:
+#      - 9503:80
+#      - 8080:8080
+#    depends_on:
+#      - golang
+
+  golang:
+    container_name: golang
+    build:
+      context: .docker/go
+      dockerfile: Dockerfile
+    networks:
+      - redirect-backend
+    env_file:
+      - .env
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/dist:rw
+    working_dir: /dist
+
+networks:
+  redirect-backend:
+    name: redirect-backend
+    driver: bridge
