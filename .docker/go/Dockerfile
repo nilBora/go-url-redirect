@@ -9,8 +9,9 @@ ENV GO111MODULE=on \
 # Move to working directory /build
 WORKDIR /dist
 
-CMD ["go", "run", "cmd/backend/main.go"]
 
+CMD ["go", "build", "-o", "cmd/backend/main.go", "./*.go"]
+CMD ["go", "run", "cmd/backend/main.go"]
 # Copy and download dependency using go mod
 #COPY go.mod .
 #COPY go.sum .
