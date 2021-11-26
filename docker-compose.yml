@@ -30,6 +30,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      - ./cmd/backend:/go/src/cmd/backend
       - ./:/dist:rw
     working_dir: /dist
 
