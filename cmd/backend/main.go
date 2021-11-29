@@ -22,31 +22,8 @@ type LinkRedirect struct {
 var db *sql.DB
 
 func main() {
-
-    if err := godotenv.Load(); err != nil {
-		//fmt.Println("No .env file found");
-	}
-
-     psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-             "password=%s dbname=%s sslmode=disable",
-             os.Getenv("APP_POSTGRESQL_HOST"),
-             os.Getenv("APP_POSTGRESQL_PORT"),
-             os.Getenv("APP_POSTGRESQL_USER"),
-             os.Getenv("APP_POSTGRESQL_PASS"),
-             os.Getenv("POSTGRESQL_DB"))
-
-    var err error
-
-     db, err = sql.Open("postgres", psqlInfo)
-     if err != nil {
-       panic(err)
-     }
-     defer db.Close()
-
-     err = db.Ping()
-     if err != nil {
-        panic(err)
-     }
+    loadEnv()
+	initDB()
 
 	e := echo.New()
 
@@ -55,21 +32,22 @@ func main() {
 
     e.GET("/*", doRedirect)
 
-	e.GET("/ping", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
-	})
-
-	httpPort := os.Getenv("HTTP_PORT")
-	if httpPort == "" {
-		httpPort = "3000"
-	}
+	httpPort := getHttpPort()
 
 	e.Logger.Fatal(e.Start(":" + httpPort))
 }
 
+func getHttpPort() string {
+    httpPort := os.Getenv("HTTP_PORT")
+    if httpPort == "" {
+        httpPort = "3000"
+    }
+    return httpPort
+}
+
 func doRedirect(c echo.Context) error {
 
-     var link LinkRedirect
+    var link LinkRedirect
 
     sqlStatement := `SELECT id, host, link, code FROM redirects WHERE id = $1`
     row := db.QueryRow(sqlStatement, 1)
@@ -92,4 +70,33 @@ func doRedirect(c echo.Context) error {
     //c.Redirect(301, "https://google.com")
     //return nil
     //
+}
+
+func loadEnv() {
+    if err := godotenv.Load(); err != nil {
+        //fmt.Println("No .env file found");
+    }
+}
+
+func initDB() {
+    psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
+                 "password=%s dbname=%s sslmode=disable",
+                 os.Getenv("APP_POSTGRESQL_HOST"),
+                 os.Getenv("APP_POSTGRESQL_PORT"),
+                 os.Getenv("APP_POSTGRESQL_USER"),
+                 os.Getenv("APP_POSTGRESQL_PASS"),
+                 os.Getenv("POSTGRESQL_DB"))
+
+    var err error
+
+     db, err = sql.Open("postgres", psqlInfo)
+     if err != nil {
+       panic(err)
+     }
+     defer db.Close()
+
+     err = db.Ping()
+     if err != nil {
+        panic(err)
+     }
 }
