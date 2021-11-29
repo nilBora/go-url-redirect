@@ -18,6 +18,6 @@ shared-service-logs:
 	docker-compose --project-directory $(CWD)/ -f $(CWD)/docker-compose-shared-services.yml logs -f
 
 shared-service-setup-db:
-	docker-compose --project-directory $(CWD)/ -f $(CWD)/docker-compose-shared-services.yml exec mysql bash /tmp/initdb/create_mysql_users.sh
+	docker-compose --project-directory $(CWD)/ -f $(CWD)/docker-compose-shared-services.yml exec postgres bash -c "if PGPASSWORD=postgres_pass psql -U postgres_user -w -lqtA | cut -d \| -f 1 | grep $(POSTGRESQL_DB); then echo DB $(NEW_DB_NAME) already exists; else PGPASSWORD=postgres_pass createdb -U postgres_user -w $(POSTGRESQL_DB); fi"
 
 
