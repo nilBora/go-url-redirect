@@ -15,9 +15,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Hello, Docker! <3")
-	})
+    e.GET("/*", doRedirect)
 
 	e.GET("/ping", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
@@ -29,4 +27,9 @@ func main() {
 	}
 
 	e.Logger.Fatal(e.Start(":" + httpPort))
+}
+
+func doRedirect(c echo.Context) error {
+    uri := c.Request().URL.String()
+    return c.HTML(http.StatusOK, "Url: "+uri)
 }
