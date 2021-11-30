@@ -19,6 +19,24 @@ type LinkRedirect struct {
 	Code string `db:"code"`
 }
 
+type RedirectRepository struct {
+	connection *sql.DB
+}
+
+// type IRedirectRepository interface {
+//     getByCode(code string)(LinkRedirect, error)
+// }
+
+func (repository *RedirectRepository) getByCode(code string) (LinkRedirect, error) {
+    var link LinkRedirect
+
+    sqlStatement := `SELECT id, host, link, code FROM redirects WHERE code = $1`
+    row := repository.connection.QueryRow(sqlStatement, code)
+    queryErr := row.Scan(&link.ID, &link.Host, &link.Link, &link.Code)
+
+    return link, queryErr
+}
+
 var db *sql.DB
 
 func main() {
@@ -47,13 +65,12 @@ func getHttpPort() string {
 }
 
 func doRedirect(c echo.Context) error {
-
     code := c.Param("code")
     var link LinkRedirect
 
-    sqlStatement := `SELECT id, host, link, code FROM redirects WHERE code = $1`
-    row := db.QueryRow(sqlStatement, code)
-    queryErr := row.Scan(&link.ID, &link.Host, &link.Link, &link.Code)
+    var redirectRepository RedirectRepository
+    redirectRepository.connection = db
+    link, queryErr := redirectRepository.getByCode(code)
 
     var result string
 
