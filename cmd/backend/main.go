@@ -24,13 +24,14 @@ var db *sql.DB
 func main() {
     loadEnv()
 	initDB()
+	defer db.Close()
 
 	e := echo.New()
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-    e.GET("/*", doRedirect)
+    e.GET("/:code", doRedirect)
 
 	httpPort := getHttpPort()
 
@@ -47,10 +48,11 @@ func getHttpPort() string {
 
 func doRedirect(c echo.Context) error {
 
+    code := c.Param("code")
     var link LinkRedirect
 
-    sqlStatement := `SELECT id, host, link, code FROM redirects WHERE id = $1`
-    row := db.QueryRow(sqlStatement, 1)
+    sqlStatement := `SELECT id, host, link, code FROM redirects WHERE code = $1`
+    row := db.QueryRow(sqlStatement, code)
     queryErr := row.Scan(&link.ID, &link.Host, &link.Link, &link.Code)
 
     var result string
@@ -65,9 +67,9 @@ func doRedirect(c echo.Context) error {
           panic(queryErr)
     }
 
-    uri := c.Request().URL.String()
-    return c.HTML(http.StatusOK, "Url: "+uri+" Res: "+result)
-    //c.Redirect(301, "https://google.com")
+
+    return c.HTML(http.StatusOK, "Url: "+code+" Res: "+result)
+    //return c.Redirect(301, link.Link)
     //return nil
     //
 }
@@ -89,14 +91,13 @@ func initDB() {
 
     var err error
 
-     db, err = sql.Open("postgres", psqlInfo)
-     if err != nil {
-       panic(err)
-     }
-     defer db.Close()
-
-     err = db.Ping()
-     if err != nil {
+    db, err = sql.Open("postgres", psqlInfo)
+    if err != nil {
         panic(err)
-     }
+    }
+
+    err = db.Ping()
+    if err != nil {
+        panic(err)
+    }
 }
