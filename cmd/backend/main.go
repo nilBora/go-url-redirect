@@ -6,9 +6,11 @@ import (
 	"os"
     "database/sql"
 
+    "utils"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/joho/godotenv"
+	//"github.com/joho/godotenv"
 	_"github.com/lib/pq"
 )
 
@@ -40,7 +42,7 @@ func (repository *RedirectRepository) getByCode(code string) (LinkRedirect, erro
 var db *sql.DB
 
 func main() {
-    loadEnv()
+    utils.LoadEnv()
 	initDB()
 	defer db.Close()
 
@@ -91,12 +93,6 @@ func doRedirect(c echo.Context) error {
     //
 }
 
-func loadEnv() {
-    if err := godotenv.Load(); err != nil {
-        //fmt.Println("No .env file found");
-    }
-}
-
 func initDB() {
     psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
                  "password=%s dbname=%s sslmode=disable",
@@ -118,3 +114,9 @@ func initDB() {
         panic(err)
     }
 }
+
+// func loadEnv() {
+//     if err := godotenv.Load(); err != nil {
+//         panic("No .env file found")
+//     }
+// }
