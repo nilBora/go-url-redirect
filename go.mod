@@ -3,8 +3,10 @@ module echo
 go 1.17
 
 require (
+	dbConnector v1.0.0
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/lib/pq v1.10.4
+	utils v1.0.0
 )
 
 require (
@@ -20,7 +22,9 @@ require (
 	golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
-	utils v1.0.0 // indirect
 )
 
-replace utils v1.0.0 => ./pkg/utils
+replace (
+	dbConnector v1.0.0 => ./pkg/dbConnector
+	utils v1.0.0 => ./pkg/utils
+)

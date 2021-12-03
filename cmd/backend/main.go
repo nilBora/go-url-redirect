@@ -42,8 +42,6 @@ func (repository *RedirectRepository) getByCode(code string) (LinkRedirect, erro
     return link, queryErr
 }
 
-var db *sql.DB
-
 func main() {
     utils.LoadEnv()
 	dbContainer := initDB()
@@ -94,33 +92,6 @@ func doRedirect(dbContainer DB) echo.HandlerFunc {
     return c.HTML(http.StatusOK, "Url: "+code+" Res: "+result)
   }
 }
-
-// func doRedirect(c echo.Context, dbContainer DB) error {
-//     code := c.Param("code")
-//     var link LinkRedirect
-//
-//     var redirectRepository RedirectRepository
-//     redirectRepository.connection = dbContainer.connection
-//     link, queryErr := redirectRepository.getByCode(code)
-//
-//     var result string
-//
-//     switch queryErr {
-//         case sql.ErrNoRows:
-//           result = "No rows were returned!"
-//           return c.HTML(http.StatusOK, "No rows were returned!")
-//         case nil:
-//           result = link.Link
-//         default:
-//           panic(queryErr)
-//     }
-//
-//
-//     return c.HTML(http.StatusOK, "Url: "+code+" Res: "+result)
-//     //return c.Redirect(301, link.Link)
-//     //return nil
-//     //
-// }
 
 func initDB() DB {
     psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
