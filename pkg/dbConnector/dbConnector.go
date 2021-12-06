@@ -7,7 +7,12 @@ import (
 )
 
 type DB struct {
-	connection *sql.DB
+    host string
+    port string
+    user string
+    pass string
+    db_name string
+	Connection *sql.DB
 }
 
 func InitDB() DB {
@@ -22,12 +27,12 @@ func InitDB() DB {
     var err error
     var dbContainer DB
 
-    dbContainer.connection, err = sql.Open("postgres", psqlInfo)
+    dbContainer.Connection, err = sql.Open("postgres", psqlInfo)
     if err != nil {
         panic(err)
     }
 
-    err = dbContainer.connection.Ping()
+    err = dbContainer.Connection.Ping()
     if err != nil {
         panic(err)
     }

@@ -7,6 +7,7 @@ import (
     "database/sql"
 
     "utils"
+    "dbConnector"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -44,8 +45,8 @@ func (repository *RedirectRepository) getByCode(code string) (LinkRedirect, erro
 
 func main() {
     utils.LoadEnv()
-	dbContainer := initDB()
-	defer dbContainer.connection.Close()
+	dbContainer := dbConnector.InitDB()
+	//defer dbContainer.connection.Close()
 
 	e := echo.New()
 
@@ -67,13 +68,13 @@ func getHttpPort() string {
     return httpPort
 }
 
-func doRedirect(dbContainer DB) echo.HandlerFunc {
+func doRedirect(dbContainer dbConnector.DB) echo.HandlerFunc {
   return func(c echo.Context) error {
     code := c.Param("code")
     var link LinkRedirect
 
     var redirectRepository RedirectRepository
-    redirectRepository.connection = dbContainer.connection
+    redirectRepository.connection = dbContainer.Connection
     link, queryErr := redirectRepository.getByCode(code)
 
     var result string
