@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+    //"fmt"
 	"net/http"
 	"os"
     "database/sql"
@@ -19,10 +19,6 @@ type LinkRedirect struct {
 	Host string `db:"host"`
 	Link string `db:"link"`
 	Code string `db:"code"`
-}
-
-type DB struct {
-	connection *sql.DB
 }
 
 type RedirectRepository struct {
@@ -92,28 +88,4 @@ func doRedirect(dbContainer dbConnector.DB) echo.HandlerFunc {
 
     return c.HTML(http.StatusOK, "Url: "+code+" Res: "+result)
   }
-}
-
-func initDB() DB {
-    psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-                 "password=%s dbname=%s sslmode=disable",
-                 os.Getenv("APP_POSTGRESQL_HOST"),
-                 os.Getenv("APP_POSTGRESQL_PORT"),
-                 os.Getenv("APP_POSTGRESQL_USER"),
-                 os.Getenv("APP_POSTGRESQL_PASS"),
-                 os.Getenv("POSTGRESQL_DB"))
-
-    var err error
-    var dbContainer DB
-
-    dbContainer.connection, err = sql.Open("postgres", psqlInfo)
-    if err != nil {
-        panic(err)
-    }
-
-    err = dbContainer.connection.Ping()
-    if err != nil {
-        panic(err)
-    }
-    return dbContainer
 }
