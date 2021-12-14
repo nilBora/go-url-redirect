@@ -25,10 +25,6 @@ type RedirectRepository struct {
 	connection *sql.DB
 }
 
-// type IRedirectRepository interface {
-//     getByCode(code string)(LinkRedirect, error)
-// }
-
 func (repository *RedirectRepository) getByCode(code string) (LinkRedirect, error) {
     var link LinkRedirect
 
@@ -41,7 +37,7 @@ func (repository *RedirectRepository) getByCode(code string) (LinkRedirect, erro
 
 func main() {
     utils.LoadEnv()
-	dbContainer := dbConnector.InitDB()
+	dbContainer := dbConnector.Init()
 	//defer dbContainer.connection.Close()
 
 	e := echo.New()

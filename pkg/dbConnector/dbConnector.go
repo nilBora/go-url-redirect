@@ -15,7 +15,7 @@ type DB struct {
 	Connection *sql.DB
 }
 
-func InitDB() DB {
+func Init() DB {
     psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
                  "password=%s dbname=%s sslmode=disable",
                  os.Getenv("APP_POSTGRESQL_HOST"),
