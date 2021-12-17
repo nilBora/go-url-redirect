@@ -4,7 +4,6 @@ import (
     "database/sql"
 )
 
-
 type LinkRedirect struct {
 	ID   int    `db:"id"`
 	Host string `db:"host"`

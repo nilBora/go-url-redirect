@@ -47,21 +47,25 @@ func doRedirect(dbContainer dbConnector.DB) echo.HandlerFunc {
     redirectRepository := new(redirect.RedirectRepository)
 
     redirectRepository.Connection = dbContainer.Connection
-    link, queryErr := redirectRepository.GetByCode(code)
-
-    var result string
-
-    switch queryErr {
-        case sql.ErrNoRows:
-          result = "No rows were returned!"
-          return c.HTML(http.StatusOK, "No rows were returned!")
-        case nil:
-          result = link.Link
-        default:
-          panic(queryErr)
+    link, err := redirectRepository.GetByCode(code)
+    if (err === nil) {
+        return c.HTML(http.StatusOK, "Url: "+code+" Res: "+link.Link)
     }
 
+    if (err === sql.ErrNoRows) {
+        return c.HTML(http.StatusOK, "No rows were returned!")
+    }
 
-    return c.HTML(http.StatusOK, "Url: "+code+" Res: "+result)
+    panic(queryErr)
+
+//     switch err {
+//         case sql.ErrNoRows:
+//           result = "No rows were returned!"
+//           return c.HTML(http.StatusOK, "No rows were returned!")
+//         case nil:
+//           result = link.Link
+//         default:
+//           panic(queryErr)
+//     }
   }
 }
