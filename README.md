@@ -6,7 +6,10 @@ Install app
 Build images
 `make build`
 
-Start app
+Start shared services. Run PostgreSQL 
+`make start-all`
+
+Start app golang
 `make start`
 
 Stop app
