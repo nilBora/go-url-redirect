@@ -49,6 +49,7 @@ func doRedirect(dbContainer dbConnector.DB) echo.HandlerFunc {
     redirectRepository.Connection = dbContainer.Connection
     link, err := redirectRepository.GetByCode(code)
     if (err == nil) {
+        addStatistics(c)
         return c.HTML(http.StatusOK, "Url: "+code+" Res: "+link.Link)
     }
 
@@ -58,4 +59,8 @@ func doRedirect(dbContainer dbConnector.DB) echo.HandlerFunc {
 
     panic(err)
   }
+}
+
+func addStatistics(c echo.Context) {
+    //
 }
