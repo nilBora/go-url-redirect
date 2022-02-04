@@ -19,6 +19,49 @@ services:
       timeout: 10s
       retries: 3
 
+  zookeeper:
+    container_name: zookeeper
+    image: bitnami/zookeeper:latest
+    networks:
+      - redirect-backend
+    ports:
+      - "2181:2181"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+
+  kafka:
+    container_name: kafka
+    image: bitnami/kafka:latest
+    networks:
+      - redirect-backend
+    ports:
+      - "9093:9093"
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+    volumes:
+      - redirect_kafka_data:/var/lib/kafka
+    depends_on:
+      - zookeeper
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    networks:
+      - redirect-backend
+    ports:
+      - 8081:8080
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    depends_on:
+      - kafka
+
 networks:
   redirect-backend:
     name: redirect-backend
@@ -26,3 +69,4 @@ networks:
 
 volumes:
   postgres_db:
+  redirect_kafka_data:
