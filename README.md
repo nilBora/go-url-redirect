@@ -1,5 +1,6 @@
 # Shortener
-
+Go+redis+kafka
+## Install
 Install app
 `make instal`
 
