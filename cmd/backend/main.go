@@ -62,5 +62,5 @@ func doRedirect(dbContainer dbConnector.DB) echo.HandlerFunc {
 }
 
 func addStatistics(c echo.Context) {
-    //
+    c.HTML(http.StatusOK, c.RealIP())
 }

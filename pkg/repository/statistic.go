@@ -16,7 +16,7 @@ type StatisticRepository struct {
 }
 
 func (repository *StatisticRepository) add(statistic Statistic) (int, error) {
-    var link LinkRedirect
+    //var link LinkRedirect
 
     id := 0
     sqlStatement := `INSERT INTO statistics (ip, user_agent, created_at) VALUE ($1, $2, $3) RETURNING id`
